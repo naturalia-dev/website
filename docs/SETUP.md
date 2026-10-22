@@ -29,7 +29,8 @@ Alternativa solo se non vuoi legare fuzzybear62: una *deploy key* SSH con access
 3. Prima del primo deploy: Project configuration → Environment variables:
    - `SITE_RECAPTCHA_KEY` = chiave del sito (scope Builds + Runtime)
    - `SITE_RECAPTCHA_SECRET` = chiave segreta (scope Runtime; "Contains secret values")
-4. Forms: se Netlify lo chiede, *Enable form detection*, poi rilancia il deploy. Devono comparire `contact-it` e `contact-en`.
+4. Forms (obbligatorio): Project → **Forms** → *Enable form detection*, poi Deploys → *Trigger deploy* → *Deploy project*. Netlify cerca i moduli solo nei deploy fatti **dopo** l'attivazione.
+   Verifica: in Forms devono comparire `contact-it` e `contact-en`. Se mancano, l'invio del modulo finisce su "Page not found" (404).
 5. Notifiche: Project configuration → Notifications → Emails and webhooks → *Form submission notifications* → *Add notification* → Email → l'indirizzo dell'amministrazione (non scriverlo qui: il repo è pubblico), form: *Any form*.
 6. Domain management → *Add a domain* → `naturalia.cc` (Netlify aggiunge anche `www`), poi i record DNS del punto 4.
 7. HTTPS: dopo la verifica DNS Netlify emette da solo il certificato Let's Encrypt e lo rinnova. Controlla in Domain management → **HTTPS**:
