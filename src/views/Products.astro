@@ -1,0 +1,88 @@
+---
+// src/views/Products.astro
+import Layout from '../layouts/Layout.astro';
+import { Picture } from 'astro:assets';
+import { localizePath, t, type Lang } from '../i18n';
+import { formatPrice, getProducts, productText } from '../lib/products';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const text = t(lang).products;
+const products = await getProducts();
+---
+
+<Layout title={text.title} description={text.description}>
+    <main class="bg-base-50 min-h-screen pt-32 pb-24">
+
+        <div class="px-6 text-center mb-20 mt-12 hero-enter">
+            <span class="text-accent-500 text-xs font-bold tracking-[0.3em] uppercase block mb-4">{text.badge}</span>
+            <h1 class="text-4xl md:text-6xl text-text-main font-semibold uppercase tracking-widest">
+                {text.heading}
+            </h1>
+            <div class="h-px w-24 bg-accent-500 mx-auto my-8"></div>
+            <p class="text-text-body font-light max-w-xl mx-auto">{text.intro}</p>
+        </div>
+
+        {products.length === 0 && (
+            <p class="relative text-center text-text-body font-light px-6">
+                {text.empty}
+                <a href={localizePath('/contact/', lang)} class="block mt-8 text-accent-500 text-xs font-bold uppercase tracking-widest hover:text-text-main transition-colors">
+                    {t(lang).layout.nav.contact}
+                </a>
+            </p>
+        )}
+
+        <!-- flex + fixed widths: one or two products stay centered instead of hugging the left column -->
+        <div class="relative max-w-7xl mx-auto px-6 flex flex-wrap justify-center gap-8">
+            {products.map((product) => {
+                const { title, status, cover } = product.data;
+                const localized = productText(product, lang);
+                const price = formatPrice(product, lang);
+                return (
+                    <a
+                        href={localizePath(`/products/${product.id}/`, lang)}
+                        class="group w-full md:w-[calc((100%-2rem)/2)] lg:w-[calc((100%-4rem)/3)] bg-base-100 border border-base-200 hover:border-accent-500 transition-colors duration-500 flex flex-col"
+                    >
+                        <div class="w-full aspect-[4/3] relative overflow-hidden border-b border-base-200">
+                            <Picture
+                                src={cover}
+                                alt={title}
+                                formats={['avif']} fallbackFormat="webp"
+                                widths={[400, 600, 800]}
+                                sizes="(min-width: 1280px) 400px, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                                class={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105`}
+                            />
+                            {status !== 'available' && (
+                                <span class="absolute top-4 left-4 z-10 bg-white/90 border border-accent-500 text-accent-500 text-[10px] font-bold uppercase tracking-[0.3em] px-3 py-1">
+                                    {text.status[status]}
+                                </span>
+                            )}
+                        </div>
+
+                        <div class="p-8 flex flex-col flex-grow">
+                            <h2 class="text-2xl text-text-main font-semibold uppercase tracking-wide mb-4">
+                                {title}
+                            </h2>
+                            <p class="text-text-body font-light italic text-sm leading-relaxed mb-8 flex-grow">
+                                {localized.tagline}
+                            </p>
+
+                            <div class="border-t border-base-200 pt-6 flex justify-between items-center gap-4">
+                                <span class="text-text-main text-xs font-bold uppercase tracking-widest">
+                                    {price ?? text.priceOnRequest}
+                                </span>
+                                <span class="text-accent-500 text-[10px] font-bold uppercase tracking-widest group-hover:translate-x-1 transition-transform duration-300">
+                                    {text.discover} &rarr;
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                );
+            })}
+        </div>
+
+    </main>
+</Layout>

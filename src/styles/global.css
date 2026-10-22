@@ -1,0 +1,120 @@
+/* src/styles/global.css */
+@import "tailwindcss";
+
+@theme {
+  /* --- PALETTE: Naturalia (brand "Cromie": #94c11f, #3baa35, #006633) --- */
+
+  /* Accent: 500 is the readable brand green (text, buttons), 300 the lime for decoration only */
+  --color-accent-300: #94C11F;
+  --color-accent-400: #3BAA35;
+  --color-accent-500: #006633;
+  --color-accent-900: #00401F;
+
+  /* Base: light surfaces, from the page background to the strongest border */
+  --color-base-50: #FAFAF7;
+  --color-base-100: #F2F1EB;
+  --color-base-200: #E5E3DA;
+  --color-base-300: #D2CFC4;
+
+  /* --- SEMANTIC TOKENS --- */
+  /* LEVEL 0: Main/Highlight (headings) */
+  --color-text-main: #13261B;
+  /* LEVEL 1: Body Text (paragraphs) */
+  --color-text-body: #3D4741;
+  /* LEVEL 2: Muted Text (secondary info) */
+  --color-text-muted: #6B736D;
+
+  /* --- TYPOGRAPHY --- */
+  /* Hanken Grotesk is self-hosted via @fontsource-variable (imported in Layout.astro) */
+  --font-sans: "Hanken Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer utilities {
+  .texture-overlay {
+    position: relative;
+    isolation: isolate;
+  }
+  .texture-overlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.04;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+}
+
+/* --- ENTRANCE ANIMATIONS ---
+   Composable: "animate-in fade-in zoom-in duration-1000".
+   duration-* sets --tw-duration; fade-in/zoom-in set the start state. */
+@keyframes enter {
+  from {
+    opacity: var(--tw-enter-opacity, 1);
+    transform: scale(var(--tw-enter-scale, 1));
+  }
+}
+
+@utility animate-in {
+  animation: enter var(--tw-duration, 150ms) cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+@utility fade-in {
+  --tw-enter-opacity: 0;
+}
+
+@utility zoom-in {
+  --tw-enter-scale: 0.95;
+}
+
+/* Opening heading of every page: same slow fade everywhere */
+@utility hero-enter {
+  animation: enter 1.5s ease-out backwards;
+  --tw-enter-opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-in,
+  .hero-enter {
+    animation: none;
+  }
+}
+
+/* BASE STYLES */
+@layer base {
+  body {
+    @apply bg-base-50 text-text-body font-sans font-light;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Usiamo il token semantico anche qui per coerenza */
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-text-main font-semibold uppercase tracking-widest;
+  }
+}
+/* --- PRODUCT DESCRIPTION (Markdown from src/content/products) --- */
+@layer components {
+  .product-prose {
+    @apply text-text-body font-light leading-relaxed space-y-6;
+  }
+  .product-prose h2,
+  .product-prose h3 {
+    @apply text-accent-500 text-sm font-semibold uppercase tracking-[0.3em] pt-10;
+  }
+  .product-prose ul {
+    @apply border-t border-base-200;
+  }
+  .product-prose li {
+    @apply relative py-4 pl-6 border-b border-base-200;
+  }
+  .product-prose li::before {
+    content: "";
+    @apply absolute left-0 top-[1.6rem] w-1 h-1 rounded-full bg-accent-300;
+  }
+  .product-prose strong {
+    @apply text-text-main font-semibold;
+  }
+  .product-prose a {
+    @apply text-accent-500 underline underline-offset-4 hover:text-text-main;
+  }
+}

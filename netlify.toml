@@ -1,0 +1,13 @@
+[build]
+  # Il comando che Netlify deve eseguire
+  command = "npm run build"
+  # La cartella che Netlify deve servire al mondo (CRUCIALE)
+  publish = "dist"
+
+[build.environment]
+  # Astro 7 richiede Node >= 22
+  NODE_VERSION = "22"
+
+[functions]
+  # Assicura che le funzioni serverless (se usate) vadano nel posto giusto
+  node_bundler = "esbuild"

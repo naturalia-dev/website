@@ -1,0 +1,83 @@
+---
+// src/components/Recaptcha.astro
+// reCAPTCHA v2 for Netlify Forms (form must keep data-netlify-recaptcha="true").
+//
+// With SITE_RECAPTCHA_KEY set at build (own keys; SITE_RECAPTCHA_SECRET set for Runtime on Netlify),
+// the widget is rendered explicitly and Google's script is loaded only when the visitor reaches
+// or focuses the form, instead of the synchronous script Netlify injects in the page.
+// Without the key, falls back to the Netlify-provided reCAPTCHA.
+interface Props {
+    lang: 'it' | 'en';
+}
+
+const { lang } = Astro.props;
+const siteKey = process.env.SITE_RECAPTCHA_KEY;
+---
+
+{siteKey ? (
+    <div class="flex justify-center pt-2">
+        <div data-recaptcha data-sitekey={siteKey} data-lang={lang} class="min-h-[78px]"></div>
+    </div>
+) : (
+    <div data-netlify-recaptcha="true" class="flex justify-center pt-2"></div>
+)}
+
+<script>
+    type Grecaptcha = {
+        render: (el: HTMLElement, opts: Record<string, string>) => number;
+        getResponse: (id: number) => string;
+    };
+    const w = window as unknown as { grecaptcha?: Grecaptcha; onRecaptchaLoad?: () => void };
+
+    let controller: AbortController | undefined;
+    let scriptRequested = false;
+
+    function initRecaptcha() {
+        controller?.abort();
+        controller = new AbortController();
+        const { signal } = controller;
+
+        const box = document.querySelector<HTMLElement>('[data-recaptcha]');
+        const form = box?.closest('form');
+        if (!box || !form) return;
+
+        let widgetId: number | undefined;
+        const render = () => {
+            if (widgetId !== undefined || !w.grecaptcha || !box.isConnected) return;
+            widgetId = w.grecaptcha.render(box, { sitekey: box.dataset.sitekey!, theme: 'light' });
+        };
+
+        const load = () => {
+            if (w.grecaptcha) return render();
+            w.onRecaptchaLoad = render;
+            if (scriptRequested) return;
+            scriptRequested = true;
+            const s = document.createElement('script');
+            s.src = `https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit&hl=${box.dataset.lang}`;
+            s.async = true;
+            document.head.append(s);
+        };
+
+        // Script already loaded by a previous page (ClientRouter navigation): no reason to wait
+        render();
+
+        // Load when the widget comes near the viewport or the visitor starts filling the form
+        const io = new IntersectionObserver((entries) => {
+            if (entries.some(e => e.isIntersecting)) { io.disconnect(); load(); }
+        }, { rootMargin: '200px' });
+        io.observe(box);
+        signal.addEventListener('abort', () => io.disconnect());
+        form.addEventListener('focusin', load, { once: true, signal });
+
+        // Unchecked box: stay on the page instead of letting Netlify reject the submission
+        form.addEventListener('submit', (e) => {
+            if (widgetId === undefined || !w.grecaptcha?.getResponse(widgetId)) {
+                e.preventDefault();
+                load();
+                box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, { signal });
+    }
+
+    document.addEventListener('astro:page-load', initRecaptcha);
+</script>

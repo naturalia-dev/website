@@ -1,0 +1,8 @@
+---
+import Product from '../../../views/Product.astro';
+import { productPaths } from '../../../lib/products';
+
+export const getStaticPaths = productPaths;
+const { product } = Astro.props;
+---
+<Product lang="en" product={product} />
