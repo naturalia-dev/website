@@ -1,0 +1,40 @@
+title: Irry Rain
+status: coming_soon
+price:
+  mode: on_request
+order: 3
+cover: ./cover.webp
+gallery: []
+tagline: "Sensore Wi-Fi della quantità di pioggia."
+highlights:
+  - "Wi-Fi"
+  - "Misura la pioggia"
+  - "Home Assistant"
+  - "Famiglia Irry"
+description: |
+  Irry Rain è il **sensore Wi-Fi della quantità di pioggia** della famiglia Irry: misura la pioggia caduta perché l'irrigazione si regoli di conseguenza.
+
+  ## In sintesi
+
+  - Misura della quantità di pioggia
+  - Connessione Wi-Fi
+  - Integrazione con la domotica, in particolare con Home Assistant
+
+  *Prodotto in sviluppo: caratteristiche e disponibilità sono provvisorie.*
+en:
+  tagline: "Wi-Fi rainfall sensor."
+  highlights:
+    - "Wi-Fi"
+    - "Measures rainfall"
+    - "Home Assistant"
+    - "Irry family"
+  description: |
+    Irry Rain is the **Wi-Fi rainfall sensor** of the Irry family: it measures how much rain has fallen so irrigation can adjust accordingly.
+
+    ## At a glance
+
+    - Measures rainfall
+    - Wi-Fi connection
+    - Home automation integration, especially with Home Assistant
+
+    *Product in development: features and availability are provisional.*

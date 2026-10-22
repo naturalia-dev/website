@@ -1,0 +1,170 @@
+---
+// src/views/Contact.astro
+import Layout from '../layouts/Layout.astro';
+import Recaptcha from '../components/Recaptcha.astro';
+import { localizePath, t, type Lang } from '../i18n';
+import { formatPrice, getProducts } from '../lib/products';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const text = t(lang).contact;
+
+// Campaign fields filled from the in-memory attribution (see Layout.astro): declared here so Netlify Forms records them
+const attributionFields = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'ttclid', 'landing_page', 'referrer'];
+
+// Products → prefilled request when the page is opened as /contact/?product=<slug>
+const requests = Object.fromEntries((await getProducts()).map(product => {
+    const { title } = product.data;
+    const url = new URL(localizePath(`/products/${product.id}/`, lang), Astro.site).href;
+    return [product.id, {
+      label: title,
+      message: text.productMessage({ title, price: formatPrice(product, lang), url }),
+    }];
+  }));
+---
+
+<Layout title={text.title} description={text.description}>
+    <main class="bg-base-50 min-h-screen flex items-center justify-center relative px-6 py-32">
+        
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[radial-gradient(closest-side,--theme(--color-accent-300/15%),transparent)] pointer-events-none"></div>
+
+        <div class="max-w-4xl w-full relative z-10 text-center">
+            
+            <div class="mb-12 space-y-8 hero-enter">
+                
+                <span class="text-accent-500 text-xs font-bold tracking-[0.3em] uppercase block">
+                    {text.badge}
+                </span>
+                
+                <h1 class="text-4xl md:text-6xl text-text-main font-semibold uppercase tracking-widest leading-tight" set:html={text.heading} />
+                
+                <p class="text-text-body font-light text-lg max-w-2xl mx-auto pt-4">
+                    {text.intro}
+                </p>
+                
+                <div class="pt-8">
+                    <p class="text-text-main text-xs font-bold uppercase tracking-[0.2em] border-b border-accent-500 inline-block pb-1">
+                        Naturalia srl &middot; Via Luciano Manara 17, 20212 Milano
+                    </p>
+                </div>
+            </div>
+
+            <form 
+                name={text.formName} 
+                method="POST" 
+                action={localizePath('/success/', lang)}
+                data-netlify="true" 
+                data-netlify-recaptcha="true"
+                netlify-honeypot="bot-field"
+                data-product-requests={JSON.stringify(requests)}
+                class="space-y-6 max-w-xl mx-auto text-left"
+            >
+                <input type="hidden" name="form-name" value={text.formName} />
+                
+                <p class="hidden">
+                    <label>{text.honeypot} <input name="bot-field" /></label>
+                </p>
+
+                <!-- Filled only when coming from a product page: shows the product in the Netlify submission -->
+                <input type="hidden" name="product" value="" />
+                <p data-product-note hidden class="text-center text-text-muted text-[10px] font-bold uppercase tracking-widest">
+                    {text.productLabel} <span class="text-accent-500"></span>
+                </p>
+
+                <div data-attribution hidden>
+                    {attributionFields.map(field => <input type="hidden" name={field} value="" />)}
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label for="name" class="text-[10px] text-accent-500 uppercase tracking-widest font-bold">{text.name}</label>
+                        <input 
+                            type="text" 
+                            id="name"
+                            name="name" 
+                            required
+                            class="w-full bg-white border border-base-300 text-text-main px-4 py-3 focus:outline-none focus:border-accent-500 transition-colors text-sm"
+                        />
+                    </div>
+                    <div class="space-y-2">
+                        <label for="email" class="text-[10px] text-accent-500 uppercase tracking-widest font-bold">{text.email}</label>
+                        <input 
+                            type="email" 
+                            id="email"
+                            name="email" 
+                            required
+                            class="w-full bg-white border border-base-300 text-text-main px-4 py-3 focus:outline-none focus:border-accent-500 transition-colors text-sm"
+                        />
+                    </div>
+                </div>
+                
+                <div class="space-y-2">
+                    <label for="message" class="text-[10px] text-accent-500 uppercase tracking-widest font-bold">{text.message}</label>
+                    <textarea 
+                        id="message"
+                        name="message" 
+                        rows="5" 
+                        required
+                        class="w-full bg-white border border-base-300 text-text-main px-4 py-3 focus:outline-none focus:border-accent-500 transition-colors text-sm"
+                    ></textarea>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="heard_about" class="text-[10px] text-accent-500 uppercase tracking-widest font-bold">{text.heardAbout.label}</label>
+                    <select
+                        id="heard_about"
+                        name="heard_about"
+                        class="w-full bg-white border border-base-300 text-text-main px-4 py-3 focus:outline-none focus:border-accent-500 transition-colors text-sm"
+                    >
+                        <option value="">{text.heardAbout.placeholder}</option>
+                        {text.heardAbout.options.map(option => <option value={option.value}>{option.label}</option>)}
+                    </select>
+                </div>
+
+                <Recaptcha lang={lang} />
+
+                <button 
+                    type="submit" 
+                    class="w-full py-4 bg-accent-500 text-white font-bold uppercase tracking-[0.2em] hover:bg-text-main transition-colors duration-500 mt-6 cursor-pointer"
+                >
+                    {text.submit}
+                </button>
+            </form>
+
+        </div>
+    </main>
+</Layout>
+
+<script>
+    // Re-run on every ClientRouter navigation (the form is new each time)
+    function prefillProduct() {
+        const form = document.querySelector<HTMLFormElement>('form[data-product-requests]');
+        const slug = new URLSearchParams(location.search).get('product');
+        if (!form || !slug) return;
+
+        const requests: Record<string, { label: string; message: string }> = JSON.parse(form.dataset.productRequests ?? '{}');
+        const request = requests[slug];
+        if (!request) return;
+
+        form.querySelector<HTMLInputElement>('input[name="product"]')!.value = request.label;
+        const message = form.querySelector<HTMLTextAreaElement>('textarea[name="message"]')!;
+        if (!message.value) message.value = request.message;
+        const note = form.querySelector<HTMLElement>('[data-product-note]')!;
+        note.querySelector('span')!.textContent = request.label;
+        note.hidden = false;
+    }
+
+    // Campaign data captured on the landing page (Layout.astro) → hidden fields
+    function fillAttribution() {
+        const attribution = window.msAttribution ?? {};
+        document.querySelectorAll<HTMLInputElement>('[data-attribution] input').forEach(input => {
+            input.value = attribution[input.name] ?? '';
+        });
+    }
+
+    document.addEventListener('astro:page-load', prefillProduct);
+    document.addEventListener('astro:page-load', fillAttribution);
+</script>

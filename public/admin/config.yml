@@ -1,0 +1,115 @@
+# Sveltia CMS (https://sveltiacms.app): admin for the products.
+# Login: "Sign In Using Access Token" with a GitHub fine-grained token
+# (only this repo, permission Contents: read and write).
+# Must match the schema in src/content.config.ts.
+
+backend:
+  name: github
+  repo: naturalia-dev/website
+  branch: main
+  commit_messages:
+    create: "Prodotti: aggiunta {{slug}}"
+    update: "Prodotti: modificata {{slug}}"
+    delete: "Prodotti: eliminata {{slug}}"
+    uploadMedia: "Prodotti: caricato {{path}}"
+    deleteMedia: "Prodotti: eliminato {{path}}"
+
+site_url: https://naturalia.cc
+display_url: https://naturalia.cc/products/
+logo_url: /favicon.svg
+
+# Not used by the products (their files stay next to index.yaml), required by the CMS
+media_folder: public/uploads
+public_folder: /uploads
+
+media_libraries:
+  default:
+    config:
+      # Short clips only (max ~30 s)
+      max_file_size: 52428800
+      # Photos converted to WebP on upload, long side at most 2048 px (the site shows 1920 at most):
+      # smaller files keep a multi-photo save light (a ~10 MB save failed with "Failed to fetch")
+      transformations:
+        raster_image:
+          format: webp
+          quality: 85
+          width: 2048
+          height: 2048
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+i18n:
+  # Shared fields and Italian texts at the root of index.yaml, English under `en`
+  structure: single_file_default_root
+  locales: [it, en]
+  default_locale: it
+
+editor:
+  preview: false
+
+collections:
+  - name: products
+    label: Prodotti
+    label_singular: Prodotto
+    description: I prodotti della pagina Prodotti / Products. Ogni salvataggio aggiorna il sito in circa 2 minuti.
+    folder: src/content/products
+    path: "{{slug}}/index"
+    extension: yaml
+    format: yaml
+    # The folder name becomes the URL: /products/<title>/
+    slug: "{{title}}"
+    identifier_field: title
+    summary: "{{title}} · {{status}}"
+    sortable_fields: [order, title]
+    create: true
+    delete: true
+    # Photos and video are saved in the product's folder, as ./file.webp
+    media_folder: ""
+    public_folder: "."
+    i18n: true
+    fields:
+      - { name: title, label: Nome, widget: string, hint: "Es. Irry The Seven" }
+      - name: status
+        label: Stato
+        widget: select
+        default: coming_soon
+        options:
+          - { label: Disponibile, value: available }
+          - { label: Prossimamente, value: coming_soon }
+      - name: price
+        label: Prezzo
+        widget: object
+        typeKey: mode
+        types:
+          - name: amount
+            label: Cifra
+            widget: object
+            fields:
+              - { name: amount, label: Prezzo in euro, widget: number, value_type: int, min: 1 }
+          - { name: on_request, label: Su richiesta, widget: object }
+      - { name: order, label: Ordine, widget: number, value_type: int, default: 100, hint: "Posizione nell'elenco: il numero più basso compare per primo." }
+      - { name: cover, label: Foto principale, widget: image, hint: "Orizzontale 4:3, almeno 1600 px di larghezza." }
+      - { name: gallery, label: Galleria, widget: image, multiple: true, required: false }
+      - name: video
+        label: Video
+        widget: file
+        required: false
+        accept: video/mp4,video/webm,video/quicktime
+        hint: "Clip breve (max 30 s): carica il file oppure incolla un link YouTube o Vimeo."
+      - { name: tagline, label: Sottotitolo, widget: string, i18n: true, hint: "Una riga, es. Centralina a 7 zone per Home Assistant." }
+      # Plain list (no sub-field): editable and translatable in English too
+      - name: highlights
+        label: Caratteristiche in evidenza
+        widget: list
+        i18n: true
+        required: false
+        max: 4
+        hint: Una caratteristica per riga, massimo 4.
+      - name: description
+        label: Descrizione
+        widget: markdown
+        i18n: true
+        buttons: [bold, italic, heading-two, bulleted-list, numbered-list, link]
+        editor_components: []

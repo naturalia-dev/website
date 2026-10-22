@@ -1,0 +1,139 @@
+---
+// src/views/Home.astro
+import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import Services from '../components/Services.astro';
+import { localizePath, t, type Lang } from '../i18n';
+import { getProducts, productText } from '../lib/products';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const text = t(lang).home;
+const productsText = t(lang).products;
+
+const icons = {
+  engineering: "lucide:cpu",
+  products: "lucide:package",
+  consulting: "lucide:messages-square",
+};
+const steps = (Object.keys(icons) as (keyof typeof icons)[]).map(key => ({
+  ...text.services.steps[key],
+  icon: icons[key],
+}));
+
+// Irry family: the products in the CMS order (the section hides itself when there are none)
+const products = await getProducts();
+---
+
+<Layout title={text.title} description={text.description}>
+    <main class="bg-base-50 min-h-screen">
+
+		<div class="relative flex flex-col items-center justify-center min-h-[100dvh] text-center p-6 max-md:pt-28 max-md:pb-16 overflow-hidden">
+
+			<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] bg-accent-300/15 rounded-full blur-[90px] pointer-events-none"></div>
+
+			<div class="z-10 max-w-5xl space-y-8 md:space-y-10 relative flex flex-col items-center hero-enter">
+
+                <img
+                    src="/brand/naturalia-vertical.svg"
+                    alt={t(lang).layout.logoAlt}
+                    width="452"
+                    height="385"
+                    fetchpriority="high"
+                    class="w-48 md:w-64 h-auto"
+                />
+
+                <p class="text-[10px] md:text-xs font-bold text-accent-500 tracking-[0.3em] uppercase">
+                    {text.hero.badge}
+                </p>
+
+                <h1 class="text-4xl md:text-6xl leading-tight font-semibold uppercase tracking-widest text-text-main" set:html={text.hero.heading} />
+
+                <p class="text-lg md:text-xl text-text-body font-light leading-relaxed max-w-2xl mx-auto normal-case">
+                    {text.hero.intro}
+                </p>
+
+				<div class="pt-4 flex flex-col md:flex-row gap-5 justify-center items-center">
+                    <a href={localizePath('/products/', lang)} class="px-8 py-3 bg-accent-500 text-white font-bold uppercase tracking-widest text-[10px] hover:bg-text-main transition-colors duration-500 min-w-[180px]">
+                        {text.hero.ctaProducts}
+					</a>
+					<a href={localizePath('/contact/', lang)} class="px-8 py-3 border border-base-300 text-text-main hover:border-accent-500 hover:text-accent-500 font-bold uppercase tracking-widest text-[10px] transition-all duration-300 min-w-[180px]">
+						{text.hero.ctaContact}
+					</a>
+				</div>
+			</div>
+
+            <div class="hidden md:block absolute bottom-12 left-1/2 -translate-x-1/2 animate-bounce text-accent-500 opacity-80">
+                <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+            </div>
+		</div>
+
+		<Services header={text.services.header} steps={steps} />
+
+        {products.length > 0 && (
+            <section class="py-24 md:py-32 bg-base-50">
+                <div class="max-w-7xl mx-auto px-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16 items-end">
+                        <div class="space-y-6">
+                            <div class="inline-block border border-accent-500/30 px-3 py-1">
+                                <span class="text-[10px] font-bold text-accent-500 uppercase tracking-[0.3em]">{text.irry.badge}</span>
+                            </div>
+                            <h2 class="text-4xl md:text-6xl font-semibold uppercase tracking-widest text-text-main leading-none" set:html={text.irry.title} />
+                        </div>
+                        <p class="text-text-body font-light text-lg max-w-md normal-case" set:html={text.irry.text} />
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {products.map(product => (
+                            <a href={localizePath(`/products/${product.id}/`, lang)} class="group block bg-white border border-base-200 hover:border-accent-500 transition-colors duration-300">
+                                <div class="aspect-[4/3] overflow-hidden bg-base-100">
+                                    <Image
+                                        src={product.data.cover}
+                                        alt={product.data.title}
+                                        widths={[400, 600, 800]}
+                                        sizes="(min-width: 768px) 33vw, 100vw"
+                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                    />
+                                </div>
+                                <div class="p-6 space-y-2">
+                                    <span class="text-[10px] font-bold text-accent-500 uppercase tracking-widest">{productsText.status[product.data.status]}</span>
+                                    <h3 class="text-lg text-text-main font-semibold uppercase tracking-widest">{product.data.title}</h3>
+                                    <p class="text-text-muted text-sm font-light normal-case">{productText(product, lang).tagline}</p>
+                                </div>
+                            </a>
+                        ))}
+                    </div>
+
+                    <div class="pt-12 text-center">
+                        <a href={localizePath('/products/', lang)} class="inline-flex items-center gap-3 text-text-main uppercase tracking-widest text-xs font-bold hover:text-accent-500 transition-colors">
+                            {text.irry.cta} <span class="text-xl" aria-hidden="true">→</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        )}
+
+        <section class="py-24 bg-base-100 border-y border-base-200 text-center">
+            <div class="max-w-4xl mx-auto px-6 space-y-8">
+                <img src="/brand/naturalia-mark.svg" alt="" width="218" height="276" class="h-12 w-auto mx-auto" />
+                <p class="text-[10px] font-bold text-accent-500 uppercase tracking-[0.3em]">{text.mission.badge}</p>
+                <p class="text-2xl md:text-3xl text-text-main font-light italic leading-relaxed normal-case" set:html={text.mission.text} />
+            </div>
+        </section>
+
+        <section class="py-24 bg-base-50">
+            <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-10">
+                <h2 class="text-3xl md:text-5xl text-text-main font-semibold uppercase tracking-widest leading-tight text-center md:text-left" set:html={text.cta.heading} />
+                <a href={localizePath('/contact/', lang)} class="px-8 py-3 bg-accent-500 text-white font-bold uppercase tracking-widest text-[10px] hover:bg-text-main transition-colors duration-500 min-w-[180px] text-center">
+                    {text.cta.button}
+                </a>
+            </div>
+        </section>
+
+	</main>
+</Layout>

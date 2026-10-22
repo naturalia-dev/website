@@ -1,0 +1,40 @@
+title: Irry The Seven
+status: coming_soon
+price:
+  mode: on_request
+order: 2
+cover: ./cover.webp
+gallery: []
+tagline: "Centralina di irrigazione a 7 zone, per casa e attività."
+highlights:
+  - "7 zone"
+  - "Wi-Fi"
+  - "Home Assistant"
+  - "Risparmio energetico"
+description: |
+  Irry The Seven è la centralina di irrigazione **a 7 zone** della famiglia Irry, per impianti residenziali e commerciali più estesi.
+
+  ## In sintesi
+
+  - Gestione di 7 zone di irrigazione
+  - Integrazione con la domotica, in particolare con Home Assistant
+  - Progettata per ridurre i consumi di acqua ed energia
+
+  *Prodotto in sviluppo: caratteristiche e disponibilità sono provvisorie.*
+en:
+  tagline: "7-zone irrigation controller for homes and businesses."
+  highlights:
+    - "7 zones"
+    - "Wi-Fi"
+    - "Home Assistant"
+    - "Energy saving"
+  description: |
+    Irry The Seven is the **7-zone** irrigation controller of the Irry family, for larger residential and commercial systems.
+
+    ## At a glance
+
+    - Controls 7 irrigation zones
+    - Home automation integration, especially with Home Assistant
+    - Designed to reduce water and energy use
+
+    *Product in development: features and availability are provisional.*

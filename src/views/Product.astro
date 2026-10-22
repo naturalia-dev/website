@@ -1,0 +1,250 @@
+---
+// src/views/Product.astro
+// One product: hero, highlights, description (Markdown), gallery with lightbox, video, contact.
+import Layout from '../layouts/Layout.astro';
+import { Picture, getImage } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+import { marked } from 'marked';
+import { localizePath, t, type Lang } from '../i18n';
+import { formatPrice, parseVideo, productText, type Product } from '../lib/products';
+
+interface Props {
+  lang: Lang;
+  product: Product;
+}
+
+const { lang, product } = Astro.props;
+const text = t(lang).products;
+const { title, status, cover, gallery } = product.data;
+const localized = productText(product, lang);
+
+const price = formatPrice(product, lang);
+const descriptionHtml = await marked.parse(localized.description);
+const video = parseVideo(product);
+// The contact page prefills its message with this product
+const contactHref = `${localizePath('/contact/', lang)}?product=${product.id}`;
+
+// Lightbox: the whole photo, never upscaled
+const photos = await Promise.all([cover, ...gallery].map(async (src, i) => ({
+    src,
+    alt: `${title}, ${text.photoAlt} ${i + 1}`,
+    full: (await getImage({ src, width: Math.min(src.width, 1920), format: 'webp' })).src,
+})));
+
+// Structured data: the product and its offer, sold by the business declared in the layout
+const pageURL = new URL(localizePath(`/products/${product.id}/`, lang), Astro.site);
+const availability = { available: 'InStock', coming_soon: 'PreOrder' }[status];
+const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: title,
+    url: pageURL.href,
+    description: localized.tagline,
+    brand: { "@type": "Brand", name: "Naturalia" },
+    manufacturer: { "@id": `${Astro.site}#business` },
+    image: await Promise.all([cover, ...gallery].map(async src =>
+        new URL((await getImage({ src, width: Math.min(src.width, 1200), format: 'jpg', quality: 80 })).src, Astro.site).href)),
+    // No offer without a price: Google rejects offers that lack one
+    ...(product.data.price.mode === 'amount' && {
+        offers: {
+            "@type": "Offer",
+            url: pageURL.href,
+            price: product.data.price.amount,
+            priceCurrency: "EUR",
+            availability: `https://schema.org/${availability}`,
+            itemCondition: "https://schema.org/NewCondition",
+            seller: { "@id": `${Astro.site}#business` },
+        },
+    }),
+};
+---
+
+<Layout title={`${title} | Naturalia`} description={`${title}: ${localized.tagline}`} ogImage={{ src: cover, alt: photos[0].alt }} schema={productSchema}>
+    <main class="bg-base-50 min-h-screen pt-32">
+
+        <section class="relative max-w-7xl mx-auto px-6 pt-8 pb-20 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div class="relative order-2 lg:order-1 space-y-6">
+                <a href={localizePath('/products/', lang)} class="inline-block text-text-muted text-[10px] font-bold uppercase tracking-widest hover:text-accent-500 transition-colors">
+                    &larr; {text.back}
+                </a>
+                <span class="block text-accent-500 text-xs font-bold tracking-[0.4em] uppercase">
+                    {text.status[status]}
+                </span>
+                <h1 class="text-4xl md:text-5xl text-text-main font-semibold uppercase tracking-widest leading-tight text-balance">
+                    {title}
+                </h1>
+                <div class="h-px w-24 bg-accent-500"></div>
+                <p class="text-text-body font-light text-lg md:text-xl">{localized.tagline}</p>
+                <p class="text-text-main text-sm font-bold uppercase tracking-widest pt-2">
+                    {price ?? text.priceOnRequest}
+                </p>
+                <a href={contactHref} class="inline-block px-10 py-4 bg-accent-500 text-white font-bold uppercase tracking-widest text-xs hover:bg-text-main transition-colors duration-500">
+                    {text.cta.button}
+                </a>
+            </div>
+
+            <button type="button" data-lightbox-open="0" aria-label={text.lightbox.open} class="relative order-1 lg:order-2 block w-full overflow-hidden border border-base-200 cursor-zoom-in group">
+                <Picture
+                    src={cover}
+                    alt={photos[0].alt}
+                    formats={['avif']} fallbackFormat="webp"
+                    widths={[480, 720, 1080, 1440]}
+                    sizes="(min-width: 1280px) 600px, (min-width: 1024px) 50vw, 100vw"
+                    loading="eager"
+                    fetchpriority="high"
+                    class={`w-full h-auto transition-transform duration-700 group-hover:scale-105`}
+                />
+            </button>
+        </section>
+
+        {localized.highlights.length > 0 && (
+            <section class="relative bg-base-100 border-y border-base-200 py-12 px-6" aria-label={text.highlights}>
+                <ul class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                    {localized.highlights.map(highlight => (
+                        <li class="flex flex-col items-center gap-3">
+                            <span class="w-1 h-1 bg-accent-500 rounded-full"></span>
+                            <span class="text-text-main text-xs font-bold uppercase tracking-widest leading-relaxed">{highlight}</span>
+                        </li>
+                    ))}
+                </ul>
+            </section>
+        )}
+
+        <section class="relative max-w-3xl mx-auto px-6 pt-12 pb-24">
+            <!-- Cue that the description goes on below the highlights -->
+            <div class="w-fit mx-auto mb-12 animate-bounce text-accent-500 opacity-80" aria-hidden="true">
+                <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+            </div>
+            <h2 class="text-2xl text-text-main font-bold uppercase tracking-widest mb-10 text-center">{text.details}</h2>
+            <div class="product-prose" set:html={descriptionHtml} />
+        </section>
+
+        {photos.length > 1 && (
+            <section class="relative max-w-7xl mx-auto px-6 pb-24">
+                <h2 class="text-2xl text-text-main font-bold uppercase tracking-widest mb-10 text-center">{text.gallery}</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {photos.map((photo, i) => (
+                        <button type="button" data-lightbox-open={i} aria-label={`${text.lightbox.open}: ${photo.alt}`} class="relative aspect-[4/3] overflow-hidden border border-base-200 cursor-zoom-in group">
+                            <Picture
+                                src={photo.src}
+                                alt={photo.alt}
+                                formats={['avif']} fallbackFormat="webp"
+                                widths={[300, 450, 600]}
+                                sizes="(min-width: 1280px) 400px, (min-width: 768px) 33vw, 50vw"
+                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            />
+                        </button>
+                    ))}
+                </div>
+            </section>
+        )}
+
+        {video && (
+            <section class="relative max-w-5xl mx-auto px-6 pb-24">
+                <h2 class="text-2xl text-text-main font-bold uppercase tracking-widest mb-10 text-center">{text.video}</h2>
+                {video.kind === 'file' ? (
+                    <video
+                        src={`${video.src}#t=0.1`}
+                        controls
+                        playsinline
+                        preload="metadata"
+                        class="block mx-auto max-h-[80vh] w-auto max-w-full border border-base-200 bg-base-100"
+                    />
+                ) : (
+                    <div class="relative aspect-video border border-base-200 bg-base-100" data-video-embed={video.embed}>
+                        <button type="button" data-video-play class="absolute inset-0 w-full h-full group cursor-pointer">
+                            <Picture src={cover} alt="" formats={['avif']} fallbackFormat="webp" widths={[640, 960]} sizes="(min-width: 1024px) 960px, 100vw" class="w-full h-full object-cover opacity-70" />
+                            <span class="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                                <span class="w-20 h-20 rounded-full border border-accent-500 flex items-center justify-center text-accent-500 group-hover:bg-accent-500 group-hover:text-white transition-colors duration-500">
+                                    <Icon name="lucide:play" class="w-8 h-8" />
+                                </span>
+                                <span class="text-text-main text-xs font-bold uppercase tracking-widest">{text.playVideo}</span>
+                            </span>
+                        </button>
+                    </div>
+                )}
+            </section>
+        )}
+
+        <section class="relative py-24 bg-base-100 border-t border-base-200 text-center">
+            <h2 class="text-3xl md:text-4xl text-text-main font-bold uppercase tracking-widest mb-8" set:html={text.cta.heading} />
+            <a href={contactHref} class="inline-block px-10 py-4 bg-accent-500 text-white font-bold uppercase tracking-widest text-xs hover:bg-text-main transition-colors duration-500">
+                {text.cta.button}
+            </a>
+        </section>
+
+        <dialog id="lightbox" data-photos={JSON.stringify(photos.map(({ full, alt }) => ({ full, alt })))} class="m-auto max-w-none max-h-none w-screen h-dvh bg-base-50/95 backdrop:bg-text-main/60 p-0">
+            <div class="w-full h-full flex items-center justify-center p-4 md:p-16">
+                <img alt="" class="max-w-full max-h-full object-contain" />
+            </div>
+            <button type="button" data-lightbox-close aria-label={text.lightbox.close} class="absolute top-6 right-6 text-text-main hover:text-accent-500 transition-colors">
+                <Icon name="lucide:x" class="w-8 h-8" />
+            </button>
+            {photos.length > 1 && (
+                <>
+                    <button type="button" data-lightbox-step="-1" aria-label={text.lightbox.prev} class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 p-2 text-text-main hover:text-accent-500 transition-colors">
+                        <Icon name="lucide:chevron-left" class="w-10 h-10" />
+                    </button>
+                    <button type="button" data-lightbox-step="1" aria-label={text.lightbox.next} class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 p-2 text-text-main hover:text-accent-500 transition-colors">
+                        <Icon name="lucide:chevron-right" class="w-10 h-10" />
+                    </button>
+                    <p data-lightbox-counter class="absolute bottom-6 left-1/2 -translate-x-1/2 text-text-muted text-xs font-mono"></p>
+                </>
+            )}
+        </dialog>
+
+    </main>
+</Layout>
+
+<script>
+    // Re-bound on every ClientRouter navigation; global listeners drop via the abort signal
+    let controller: AbortController | undefined;
+
+    function initProduct() {
+        controller?.abort();
+        controller = new AbortController();
+        const { signal } = controller;
+
+        const dialog = document.getElementById('lightbox') as HTMLDialogElement | null;
+        if (dialog) {
+            const photos: { full: string; alt: string }[] = JSON.parse(dialog.dataset.photos ?? '[]');
+            const img = dialog.querySelector('img')!;
+            const counter = dialog.querySelector('[data-lightbox-counter]');
+            let current = 0;
+
+            const show = (index: number) => {
+                current = (index + photos.length) % photos.length;
+                img.src = photos[current].full;
+                img.alt = photos[current].alt;
+                if (counter) counter.textContent = `${current + 1} / ${photos.length}`;
+            };
+
+            document.querySelectorAll<HTMLElement>('[data-lightbox-open]').forEach(button =>
+                button.addEventListener('click', () => { show(Number(button.dataset.lightboxOpen)); dialog.showModal(); }, { signal }));
+            dialog.querySelectorAll<HTMLElement>('[data-lightbox-step]').forEach(button =>
+                button.addEventListener('click', () => show(current + Number(button.dataset.lightboxStep)), { signal }));
+            dialog.querySelector('[data-lightbox-close]')?.addEventListener('click', () => dialog.close(), { signal });
+            // Click on the dark area around the photo closes
+            dialog.addEventListener('click', (e) => { if (e.target === dialog || e.target === img.parentElement) dialog.close(); }, { signal });
+            dialog.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') show(current - 1);
+                if (e.key === 'ArrowRight') show(current + 1);
+            }, { signal });
+        }
+
+        // YouTube / Vimeo: the player (and its cookies) loads only after the click
+        document.querySelectorAll<HTMLElement>('[data-video-embed]').forEach(container =>
+            container.querySelector('[data-video-play]')?.addEventListener('click', () => {
+                const iframe = document.createElement('iframe');
+                iframe.src = container.dataset.videoEmbed!;
+                iframe.allow = 'autoplay; fullscreen; picture-in-picture';
+                iframe.allowFullscreen = true;
+                iframe.className = 'absolute inset-0 w-full h-full';
+                container.replaceChildren(iframe);
+            }, { signal, once: true }));
+    }
+
+    document.addEventListener('astro:page-load', initProduct);
+</script>

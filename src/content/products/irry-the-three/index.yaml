@@ -1,0 +1,40 @@
+title: Irry The Three
+status: coming_soon
+price:
+  mode: on_request
+order: 1
+cover: ./cover.webp
+gallery: []
+tagline: "Centralina di irrigazione a 3 zone, connessa e a basso consumo."
+highlights:
+  - "3 zone"
+  - "Wi-Fi"
+  - "Home Assistant"
+  - "Risparmio energetico"
+description: |
+  Irry The Three è la centralina di irrigazione **a 3 zone** della famiglia Irry, pensata per giardini e spazi verdi residenziali.
+
+  ## In sintesi
+
+  - Gestione di 3 zone di irrigazione
+  - Integrazione con la domotica, in particolare con Home Assistant
+  - Progettata per ridurre i consumi di acqua ed energia
+
+  *Prodotto in sviluppo: caratteristiche e disponibilità sono provvisorie.*
+en:
+  tagline: "Connected, low-power 3-zone irrigation controller."
+  highlights:
+    - "3 zones"
+    - "Wi-Fi"
+    - "Home Assistant"
+    - "Energy saving"
+  description: |
+    Irry The Three is the **3-zone** irrigation controller of the Irry family, designed for residential gardens and green spaces.
+
+    ## At a glance
+
+    - Controls 3 irrigation zones
+    - Home automation integration, especially with Home Assistant
+    - Designed to reduce water and energy use
+
+    *Product in development: features and availability are provisional.*
