@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # Local Netlify folder
 .netlify
+
+# guida di messa in linea, solo locale
+docs/SETUP.md
