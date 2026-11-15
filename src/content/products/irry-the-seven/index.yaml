@@ -5,36 +5,185 @@ price:
 order: 2
 cover: ./cover.webp
 gallery: []
-tagline: "Centralina di irrigazione a 7 zone, per casa e attività."
+tagline: "La centralina d'irrigazione a 7 zone che guarda il meteo al posto tuo, si comanda dal telefono senza cloud e si integra con Home Assistant."
 highlights:
-  - "7 zone"
-  - "Wi-Fi"
+  - "Meteo locale"
+  - "Senza cloud"
   - "Home Assistant"
-  - "Risparmio energetico"
+  - "Sicura"
 description: |
-  Irry The Seven è la centralina di irrigazione **a 7 zone** della famiglia Irry, per impianti residenziali e commerciali più estesi.
+  **Irriga meno, quando serve davvero.** Irry The Seven è la centralina d'irrigazione di Naturalia per giardini e orti fino a 7 zone. Salta l'irrigazione quando ha piovuto e, con una stazione meteo, può adattare le durate al clima reale della tua zona.
 
-  ## In sintesi
+  **Tua, non del cloud.** Si configura con una procedura guidata e si usa da una semplice pagina web, da qualsiasi telefono, tablet o PC: niente app, niente abbonamenti, e funziona anche senza Internet.
 
-  - Gestione di 7 zone di irrigazione
-  - Integrazione con la domotica, in particolare con Home Assistant
-  - Progettata per ridurre i consumi di acqua ed energia
+  **Parla con Home Assistant.** Chi ha Home Assistant trova ogni funzione già integrata, senza entità nascoste. Accessi protetti da HTTPS e password robuste, aggiornamenti firmati da Naturalia.
+
+  Progettata e sviluppata da Naturalia, dall'elettronica al firmware.
+
+  ## Dati tecnici
+
+  - 7 zone, oppure 6 più un'uscita ausiliaria per pompa o altro carico
+  - 3 programmi per zona, al massimo 3 zone aperte insieme
+  - Wi-Fi 2,4 GHz, con rete di riserva e punto di accesso proprio
+  - Storico di 365 giorni
+  - Valvole a 24 V AC, trasformatore di sicurezza EN 61558-2-6
+  - Alimentazione della scheda 7–36 V DC o USB-C
+  - Interfaccia in 6 lingue: italiano, inglese, tedesco, francese, spagnolo, portoghese
 
   *Prodotto in sviluppo: caratteristiche e disponibilità sono provvisorie.*
+features:
+  - icon: droplets
+    title: "Meno acqua, piante più sane"
+    lead: "Pioggia, vento e clima della tua zona decidono al posto tuo."
+    points:
+      - "**Salta l'irrigazione dopo la pioggia**, oltre la soglia che scegli. Se piove mentre irriga, chiude le zone."
+      - "**Durate adattate al clima:** con una stazione meteo può calcolare ogni giorno quanta acqua hanno perso le piante (FAO-56 o Hargreaves)."
+      - "**Una zona, una coltura:** prato, aiuole, orto, alberi o piante mediterranee, ognuna col suo fabbisogno."
+      - "**Pausa col vento forte**, e ripresa da sola quando cala."
+      - "**Nel dubbio, irriga:** se un dato meteo manca, il giardino non resta all'asciutto."
+  - icon: calendar-clock
+    title: "Programmare è semplice"
+    lead: "Pochi tocchi per l'orto di casa, tutta la flessibilità per gli impianti complessi."
+    points:
+      - "**Modo Rapido:** una sola durata per tutte le zone, in sequenza."
+      - "**Modo per zona:** 3 programmi per zona, a giorni della settimana, pari, dispari o ogni N giorni."
+      - "**Mai troppe valvole insieme:** al massimo 3 zone aperte, per proteggere trasformatore e pressione."
+      - "**Storico di un anno**, con il motivo di ogni irrigazione saltata."
+  - icon: cloud-off
+    title: "Senza cloud né abbonamenti"
+    lead: "Programmi, dati e storico restano nella centralina, a casa tua."
+    points:
+      - "**Nessuna app da installare:** basta il browser di telefono, tablet o PC."
+      - "**Funziona anche senza Internet**, e perfino senza il Wi-Fi di casa."
+      - "**Rete di riserva:** se il Wi-Fi principale cade, passa a una seconda rete."
+      - "**Backup cifrato** della configurazione: si riparte in pochi minuti."
+  - icon: house-wifi
+    title: "Nata per Home Assistant"
+    lead: "Compare da sola tra i dispositivi, con l'integrazione ufficiale ESPHome."
+    points:
+      - "**Tutto è esposto:** zone, programmi, meteo, aggiornamenti. Nessuna entità nascosta."
+      - "**Comunicazione cifrata** in rete locale."
+      - "**Stazione meteo Ecowitt collegata direttamente**, anche senza Home Assistant."
+      - "**Alba, tramonto e fase lunare** pronti per le tue automazioni."
+  - icon: shield-check
+    title: "Sicura per progetto"
+    lead: "Sicurezza vera, non di facciata."
+    points:
+      - "**Connessione HTTPS** e chiave cifrata per Home Assistant."
+      - "**Due ruoli:** installatore e utente, ognuno con i suoi permessi."
+      - "**Password robuste obbligatorie** e blocco automatico dopo 5 tentativi errati."
+      - "**Aggiornamenti firmati da Naturalia:** il firmware non firmato viene rifiutato."
+  - icon: refresh-cw
+    title: "Sempre aggiornata"
+    lead: "Si aggiorna senza pensieri, e senza mai disturbare l'irrigazione."
+    points:
+      - "**Da Internet**, in tre modalità: spento, solo avviso o automatico."
+      - "**Mai durante l'irrigazione:** aspetta che tutte le valvole siano chiuse."
+      - "**Ritorno automatico** alla versione precedente se qualcosa va storto."
+      - "**Anche da file**, per gli impianti senza Internet."
+  - icon: cloud-sun
+    title: "Una pagina meteo da mostrare"
+    lead: "Temperatura, pioggia, vento e rosa dei venti, su 24 ore o 7 giorni."
+    points:
+      - "**Facoltativa e in sola lettura:** perfetta per un display di casa o uno schermo in giardino."
+      - "**Riservata:** non mostra mai zone, programmi, posizione o reti."
+  - icon: wrench
+    title: "Pronta in pochi minuti"
+    lead: "Installazione guidata al primo avvio, alla portata di tutti."
+    points:
+      - "**6 lingue**, tema chiaro e scuro."
+      - "**Cambi di rete a prova di errore:** se la nuova rete non va, torna alla precedente."
+      - "**Impianto standard:** valvole a 24 V AC e trasformatore di sicurezza."
+  - icon: code-xml
+    title: "Aperta e trasparente"
+    lead: "Progettata e sviluppata da Naturalia, dall'elettronica al firmware."
+    points:
+      - "**Firmware basato su ESPHome**, con licenza open source GPL v3."
+      - "**Interfaccia web** con licenza MIT."
 en:
-  tagline: "7-zone irrigation controller for homes and businesses."
+  tagline: "The 7-zone irrigation controller that watches the weather for you, runs from your phone without the cloud and plugs into Home Assistant."
   highlights:
-    - "7 zones"
-    - "Wi-Fi"
+    - "Local weather"
+    - "No cloud"
     - "Home Assistant"
-    - "Energy saving"
+    - "Secure"
   description: |
-    Irry The Seven is the **7-zone** irrigation controller of the Irry family, for larger residential and commercial systems.
+    **Water less, exactly when it matters.** Irry The Seven is Naturalia's irrigation controller for gardens and vegetable plots, with up to 7 zones. It skips watering after rain and, with a weather station, can adapt run times to your local climate.
 
-    ## At a glance
+    **Yours, not the cloud's.** A guided setup gets it running, and a simple web page runs it day to day from any phone, tablet or PC: no app, no subscription, and it works even without Internet.
 
-    - Controls 7 irrigation zones
-    - Home automation integration, especially with Home Assistant
-    - Designed to reduce water and energy use
+    **Speaks Home Assistant.** If you use Home Assistant, every function is already integrated, nothing hidden. HTTPS and strong passwords protect access, and updates are signed by Naturalia.
+
+    Designed and built by Naturalia, from the electronics to the firmware.
+
+    ## Specifications
+
+    - 7 zones, or 6 plus an auxiliary output for a pump or other load
+    - 3 programs per zone, at most 3 zones open together
+    - 2.4 GHz Wi-Fi, with a backup network and its own access point
+    - 365-day history
+    - 24 V AC valves, EN 61558-2-6 safety transformer
+    - Board powered at 7–36 V DC or over USB-C
+    - Interface in 6 languages: Italian, English, German, French, Spanish, Portuguese
 
     *Product in development: features and availability are provisional.*
+  features:
+    - title: "Less water, healthier plants"
+      lead: "Rain, wind and your local climate decide for you."
+      points:
+        - "**Skips watering after rain**, above the threshold you choose. If it rains while watering, the zones close."
+        - "**Run times adapted to the climate:** with a weather station it can work out each day how much water your plants have lost (FAO-56 or Hargreaves)."
+        - "**One zone, one crop:** lawn, flower beds, vegetables, trees or Mediterranean plants, each with its own needs."
+        - "**Pauses in strong wind**, and resumes by itself when it drops."
+        - "**When in doubt, it waters:** if weather data is missing, the garden never goes dry."
+    - title: "Scheduling made simple"
+      lead: "A few taps for a home garden, full flexibility for complex systems."
+      points:
+        - "**Quick mode:** one duration for all zones, in sequence."
+        - "**Per-zone mode:** 3 programs per zone, on weekdays, even or odd days, or every N days."
+        - "**Never too many valves at once:** at most 3 zones open, to protect transformer and water pressure."
+        - "**One-year history**, with the reason for every skipped run."
+    - title: "No cloud, no subscription"
+      lead: "Programs, data and history stay in the controller, in your home."
+      points:
+        - "**No app to install:** any phone, tablet or PC browser will do."
+        - "**Works without Internet**, and even without home Wi-Fi."
+        - "**Backup network:** if the main Wi-Fi drops, it switches to a second one."
+        - "**Encrypted configuration backup:** back up and running in minutes."
+    - title: "Built for Home Assistant"
+      lead: "It shows up among your devices by itself, through the official ESPHome integration."
+      points:
+        - "**Everything is exposed:** zones, programs, weather, updates. No hidden entities."
+        - "**Encrypted communication** on your local network."
+        - "**Ecowitt weather station connected directly**, even without Home Assistant."
+        - "**Sunrise, sunset and moon phase** ready for your automations."
+    - title: "Secure by design"
+      lead: "Real security, not window dressing."
+      points:
+        - "**HTTPS connection** and an encrypted key for Home Assistant."
+        - "**Two roles:** installer and user, each with their own permissions."
+        - "**Strong passwords enforced**, with an automatic lockout after 5 wrong attempts."
+        - "**Updates signed by Naturalia:** unsigned firmware is rejected."
+    - title: "Always up to date"
+      lead: "Worry-free updates that never get in the way of watering."
+      points:
+        - "**Over the Internet**, in three modes: off, notify only or automatic."
+        - "**Never while watering:** it waits until all valves are closed."
+        - "**Automatic rollback** to the previous version if something goes wrong."
+        - "**From a file too**, for installations without Internet."
+    - title: "A weather page worth showing"
+      lead: "Temperature, rain, wind and wind rose, over 24 hours or 7 days."
+      points:
+        - "**Optional and read-only:** perfect for a home display or a screen in the garden."
+        - "**Private:** it never shows zones, programs, location or networks."
+    - title: "Ready in minutes"
+      lead: "Guided setup at first start, easy for everyone."
+      points:
+        - "**6 languages**, light and dark theme."
+        - "**Error-proof network changes:** if the new network fails, it goes back to the previous one."
+        - "**Standard installation:** 24 V AC valves and a safety transformer."
+    - title: "Open and transparent"
+      lead: "Designed and built by Naturalia, from the electronics to the firmware."
+      points:
+        - "**Firmware based on ESPHome**, under the GPL v3 open source licence."
+        - "**Web interface** under the MIT licence."

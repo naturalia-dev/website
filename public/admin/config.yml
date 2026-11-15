@@ -113,3 +113,31 @@ collections:
         i18n: true
         buttons: [bold, italic, heading-two, bulleted-list, numbered-list, link]
         editor_components: []
+      # Feature cards below the description (optional). Icon chosen once: the English cards reuse it.
+      - name: features
+        label: Funzioni
+        widget: list
+        i18n: true
+        required: false
+        summary: "{{fields.title}}"
+        hint: "Schede con icona, titolo, frase e punti. Nei punti: **Inizio in grassetto.** spiegazione."
+        fields:
+          - name: icon
+            label: Icona
+            widget: select
+            required: false
+            i18n: duplicate
+            options:
+              - { label: Gocce (acqua), value: droplets }
+              - { label: Calendario, value: calendar-clock }
+              - { label: Niente cloud, value: cloud-off }
+              - { label: Casa connessa, value: house-wifi }
+              - { label: Scudo, value: shield-check }
+              - { label: Aggiornamento, value: refresh-cw }
+              - { label: Meteo, value: cloud-sun }
+              - { label: Chiave inglese, value: wrench }
+              - { label: Codice, value: code-xml }
+              - { label: Germoglio, value: sprout }
+          - { name: title, label: Titolo, widget: string, i18n: true }
+          - { name: lead, label: Frase, widget: string, i18n: true }
+          - { name: points, label: Punti, widget: list, i18n: true, required: false }

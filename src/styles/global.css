@@ -117,4 +117,19 @@
   .product-prose a {
     @apply text-accent-500 underline underline-offset-4 hover:text-text-main;
   }
+
+  /* Points of a feature card (Product.astro): inline Markdown, bold lead-in */
+  .feature-points {
+    @apply text-sm text-text-body font-light leading-relaxed space-y-3 pt-5 border-t border-base-200;
+  }
+  .feature-points li {
+    @apply relative pl-4;
+  }
+  .feature-points li::before {
+    content: "";
+    @apply absolute left-0 top-[0.6rem] w-1 h-1 rounded-full bg-accent-300;
+  }
+  .feature-points strong {
+    @apply text-text-main font-semibold;
+  }
 }

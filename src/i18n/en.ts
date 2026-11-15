@@ -21,7 +21,7 @@ export const en = {
     hero: {
       badge: "Engineering with a green heart",
       heading: `Technology <br /> <span class="text-accent-500">in tune with nature</span>`,
-      intro: "For over thirty years we have been designing and building electronics, products and technology solutions. With one mission: making them greener every day.",
+      intro: "For over thirty years we have been designing and building products and technology solutions. With one mission: making them greener every day.",
       ctaProducts: "Discover the products",
       ctaContact: "Talk to us",
     },
@@ -79,6 +79,7 @@ export const en = {
     back: "All products",
     highlights: "Highlights",
     details: "The product",
+    features: "What it does",
     gallery: "Gallery",
     video: "Video",
     playVideo: "Watch the video",

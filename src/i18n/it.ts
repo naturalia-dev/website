@@ -20,7 +20,7 @@ export const it = {
     hero: {
       badge: "Ingegneria dal cuore verde",
       heading: `Tecnologia <br /> <span class="text-accent-500">a misura di natura</span>`,
-      intro: "Da oltre trent'anni progettiamo e realizziamo elettronica, prodotti e soluzioni tecnologiche. Con una missione: renderli ogni giorno più green.",
+      intro: "Da oltre trent'anni progettiamo e realizziamo prodotti e soluzioni tecnologiche. Con una missione: renderli ogni giorno più green.",
       ctaProducts: "Scopri i prodotti",
       ctaContact: "Parla con noi",
     },
@@ -78,6 +78,7 @@ export const it = {
     back: "Tutti i prodotti",
     highlights: "In evidenza",
     details: "Il prodotto",
+    features: "Cosa sa fare",
     gallery: "Galleria",
     video: "Video",
     playVideo: "Guarda il video",

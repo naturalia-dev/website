@@ -20,6 +20,10 @@ const localized = productText(product, lang);
 
 const price = formatPrice(product, lang);
 const descriptionHtml = await marked.parse(localized.description);
+const features = localized.features.map(card => ({
+    ...card,
+    points: card.points.map(point => marked.parseInline(point) as string),
+}));
 const video = parseVideo(product);
 // The contact page prefills its message with this product
 const contactHref = `${localizePath('/contact/', lang)}?product=${product.id}`;
@@ -120,6 +124,27 @@ const productSchema = {
             <h2 class="text-2xl text-text-main font-bold uppercase tracking-widest mb-10 text-center">{text.details}</h2>
             <div class="product-prose" set:html={descriptionHtml} />
         </section>
+
+        {features.length > 0 && (
+            <section class="relative bg-base-100 border-y border-base-200 py-24 px-6 mb-24">
+                <h2 class="text-2xl text-text-main font-bold uppercase tracking-widest mb-14 text-center">{text.features}</h2>
+                <!-- Hairline grid: 1px gaps over the border colour -->
+                <ul class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-base-200 border border-base-200">
+                    {features.map(card => (
+                        <li class="bg-base-50 p-8 md:p-10 space-y-5">
+                            <Icon name={`lucide:${card.icon ?? 'sprout'}`} class="w-8 h-8 text-accent-500" aria-hidden="true" />
+                            <h3 class="text-text-main text-sm font-bold uppercase tracking-widest leading-relaxed">{card.title}</h3>
+                            <p class="text-text-body font-light leading-relaxed">{card.lead}</p>
+                            {card.points.length > 0 && (
+                                <ul class="feature-points">
+                                    {card.points.map(point => <li set:html={point} />)}
+                                </ul>
+                            )}
+                        </li>
+                    ))}
+                </ul>
+            </section>
+        )}
 
         {photos.length > 1 && (
             <section class="relative max-w-7xl mx-auto px-6 pb-24">

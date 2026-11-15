@@ -39,10 +39,11 @@ export async function productPaths() {
   return (await getProducts()).map(product => ({ params: { slug: product.id }, props: { product } }));
 }
 
-/** Tagline, highlights and description in the page language (English falls back to Italian) */
+/** Tagline, highlights, description and features in the page language (English falls back to Italian) */
 export function productText(product: Product, lang: Lang) {
-  const { tagline, highlights, description, en } = product.data;
-  return lang === 'en' && en ? en : { tagline, highlights, description };
+  const { tagline, highlights, description, features, en } = product.data;
+  if (lang !== 'en' || !en) return { tagline, highlights, description, features };
+  return { ...en, features: en.features.map((card, i) => ({ ...card, icon: card.icon ?? features[i]?.icon })) };
 }
 
 /** "1.200 €" / "€1,200", or null when the price is on request */

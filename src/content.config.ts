@@ -7,11 +7,24 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
+// Icons a feature card can show (lucide names, also offered as a select in the CMS)
+export const featureIcons = ['droplets', 'calendar-clock', 'cloud-off', 'house-wifi', 'shield-check', 'refresh-cw', 'cloud-sun', 'wrench', 'code-xml', 'sprout'] as const;
+
+// Feature card: points are inline Markdown ("**Short.** explanation").
+// The icon may be omitted in English: it falls back to the Italian card at the same position.
+const feature = z.object({
+  icon: z.enum(featureIcons).optional(),
+  title: z.string(),
+  lead: z.string(),
+  points: z.array(z.string()).default([]),
+});
+
 // Texts that change with the language; description is Markdown (## headings, lists, **bold**)
 const localized = {
   tagline: z.string(),
   highlights: z.array(z.string()).default([]),
   description: z.string(),
+  features: z.array(feature).default([]),
 };
 
 const products = defineCollection({
