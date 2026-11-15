@@ -13,7 +13,8 @@ const { lang } = Astro.props;
 const text = t(lang).contact;
 
 // Campaign fields filled from the in-memory attribution (see Layout.astro): declared here so Netlify Forms records them
-const attributionFields = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'ttclid', 'landing_page', 'referrer'];
+const attributionFields = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'ttclid', 'landing_page', 'source_site'];
+// (not `referrer`: Netlify records its own field with that name, the page the form was sent from)
 
 // Products → prefilled request when the page is opened as /contact/?product=<slug>
 const requests = Object.fromEntries((await getProducts()).map(product => {
@@ -68,15 +69,9 @@ const requests = Object.fromEntries((await getProducts()).map(product => {
                     <label>{text.honeypot} <input name="bot-field" /></label>
                 </p>
 
-                <!-- Filled only when coming from a product page: shows the product in the Netlify submission -->
-                <input type="hidden" name="product" value="" />
                 <p data-product-note hidden class="text-center text-text-muted text-[10px] font-bold uppercase tracking-widest">
                     {text.productLabel} <span class="text-accent-500"></span>
                 </p>
-
-                <div data-attribution hidden>
-                    {attributionFields.map(field => <input type="hidden" name={field} value="" />)}
-                </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
@@ -124,6 +119,14 @@ const requests = Object.fromEntries((await getProducts()).map(product => {
                     </select>
                 </div>
 
+                <!-- Hidden fields after the visible ones: the notification email lists fields in form order.
+                     Empty ones are left out on submit (see skipEmptyFields) -->
+                <!-- Filled only when coming from a product page: shows the product in the Netlify submission -->
+                <input type="hidden" name="product" value="" data-optional />
+                <div data-attribution hidden>
+                    {attributionFields.map(field => <input type="hidden" name={field} value="" data-optional />)}
+                </div>
+
                 <Recaptcha lang={lang} />
 
                 <button 
@@ -165,6 +168,17 @@ const requests = Object.fromEntries((await getProducts()).map(product => {
         });
     }
 
+    // Disabled fields are not submitted: the notification email lists only the hidden fields with a value
+    function skipEmptyFields() {
+        const form = document.querySelector<HTMLFormElement>('form[data-product-requests]');
+        form?.addEventListener('submit', () => {
+            form.querySelectorAll<HTMLInputElement>('input[data-optional]').forEach(input => {
+                input.disabled = input.value === '';
+            });
+        });
+    }
+
     document.addEventListener('astro:page-load', prefillProduct);
     document.addEventListener('astro:page-load', fillAttribution);
+    document.addEventListener('astro:page-load', skipEmptyFields);
 </script>

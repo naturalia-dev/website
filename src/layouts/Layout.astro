@@ -220,7 +220,7 @@ const menuLabels = text.menu;
                 const attribution: Record<string, string> = { landing_page: location.pathname };
                 if (document.referrer) {
                     const referrer = new URL(document.referrer).hostname;
-                    if (referrer !== location.hostname) attribution.referrer = referrer;
+                    if (referrer !== location.hostname) attribution.source_site = referrer;
                 }
                 for (const key of campaignKeys) {
                     const value = params.get(key);
