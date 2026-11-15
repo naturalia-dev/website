@@ -5,6 +5,7 @@ import '@fontsource-variable/hanken-grotesk/wght.css';
 import fontLatin from '@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2?url';
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
+import { Icon } from 'astro-icon/components';
 import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import ogSource from '../assets/images/og-default.png';
@@ -126,19 +127,39 @@ const menuLabels = text.menu;
         <script type="application/ld+json" set:html={JSON.stringify(businessSchema)} />
         {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
         
+        <!-- Theme before the first paint: style (garden | night) and mode (light | dark | system), as in the
+             Irry The Seven interface. The ClientRouter copies <html> attributes from each new page: set them there too. -->
+        <script is:inline>
+            (() => {
+                const read = key => { try { return localStorage.getItem(key); } catch { return null; } };
+                const system = matchMedia('(prefers-color-scheme: dark)');
+                const apply = (doc = document) => {
+                    const mode = ['light', 'dark'].includes(read('naturalia-mode')) ? read('naturalia-mode') : 'system';
+                    const root = doc.documentElement;
+                    root.dataset.style = read('naturalia-style') === 'night' ? 'night' : 'garden';
+                    root.dataset.mode = mode;
+                    root.dataset.theme = mode === 'system' ? (system.matches ? 'dark' : 'light') : mode;
+                };
+                window.naturaliaTheme = apply;
+                apply();
+                system.addEventListener('change', () => apply());
+                document.addEventListener('astro:before-swap', event => apply(event.newDocument));
+            })();
+        </script>
         <ClientRouter />
         
         <!-- Latin subset covers IT/EN text: fetched with the HTML instead of after the CSS -->
         <link rel="preload" href={fontLatin} as="font" type="font/woff2" crossorigin />
 	</head>
-    <body class="bg-base-50 text-text-body antialiased selection:bg-accent-500 selection:text-white">
+    <body class="bg-base-50 text-text-body antialiased selection:bg-accent-500 selection:text-on-accent">
         
         <header 
             transition:name="header"
-            class="fixed top-0 left-0 w-full z-50 px-6 py-4 flex justify-between items-center bg-white/80 backdrop-blur-md border-b border-base-200"
+            class="fixed top-0 left-0 w-full z-50 px-6 py-4 flex justify-between items-center bg-base-50/80 backdrop-blur-md border-b border-base-200"
         >
             <a href={localizePath('/', lang)} class="block transition-opacity hover:opacity-75">
-                <img src="/brand/naturalia-horizontal.svg" alt={text.logoAlt} width="489" height="182" class="h-10 w-auto" />
+                <img src="/brand/naturalia-horizontal.svg" alt={text.logoAlt} width="489" height="182" class="h-10 w-auto dark:hidden" />
+                <img src="/brand/naturalia-horizontal-dark.svg" alt={text.logoAlt} width="489" height="182" class="h-10 w-auto hidden dark:block" />
             </a>
 
             <nav class="hidden md:flex items-center gap-8">
@@ -155,8 +176,18 @@ const menuLabels = text.menu;
                 ))}
             </nav>
 
-            <div class="flex items-center gap-5">
-                <a href={langSwitchLink} class="text-xs font-bold text-accent-500 hover:text-text-main uppercase tracking-widest border border-accent-500 px-2 py-1 rounded-sm transition-colors">
+            <div class="flex items-center gap-4">
+                <button
+                    type="button"
+                    popovertarget="appearance"
+                    class="w-8 h-8 grid place-items-center rounded-lg border border-base-300 text-text-main hover:text-accent-500 hover:border-accent-500 transition-colors cursor-pointer"
+                    aria-label={text.appearance.button}
+                    title={text.appearance.button}
+                >
+                    <Icon name="lucide:sun-moon" class="w-4 h-4" aria-hidden="true" />
+                </button>
+
+                <a href={langSwitchLink} class="text-xs font-bold text-accent-500 hover:text-text-main uppercase tracking-widest border border-accent-500 px-2 py-1 rounded-lg transition-colors">
                     {langSwitchLabel}
                 </a>
 
@@ -188,7 +219,7 @@ const menuLabels = text.menu;
                     <a
                         href={link.href}
                         aria-current={isActive(link.href) ? 'page' : undefined}
-                        class={`text-lg font-bold uppercase tracking-[0.3em] transition-colors ${
+                        class={`text-lg font-bold uppercase tracking-[0.2em] transition-colors ${
                             isActive(link.href) ? 'text-accent-500' : 'text-text-main hover:text-accent-500'
                         }`}
                     >
@@ -197,14 +228,42 @@ const menuLabels = text.menu;
                 ))}
             </nav>
             <div class="h-px w-12 bg-accent-500"></div>
-            <p class="text-[10px] text-text-muted uppercase tracking-[0.3em]">Green people network</p>
+            <p class="text-xs text-text-muted uppercase tracking-[0.2em]">Green people network</p>
+        </div>
+
+        <!-- Appearance panel (native popover: opens and closes without script, Esc and outside click included) -->
+        <div id="appearance" popover class="appearance-panel card p-5 space-y-5" data-appearance>
+            <fieldset class="space-y-2">
+                <legend class="text-xs font-bold uppercase tracking-widest text-text-muted mb-2">{text.appearance.mode}</legend>
+                <div class="appearance-seg">
+                    {(['light', 'dark', 'system'] as const).map(mode => (
+                        <label>
+                            <input type="radio" name="appearance-mode" value={mode} class="sr-only" />
+                            <Icon name={`lucide:${{ light: 'sun', dark: 'moon', system: 'monitor' }[mode]}`} class="w-4 h-4" aria-hidden="true" />
+                            {text.appearance.modes[mode]}
+                        </label>
+                    ))}
+                </div>
+            </fieldset>
+            <fieldset class="space-y-2">
+                <legend class="text-xs font-bold uppercase tracking-widest text-text-muted mb-2">{text.appearance.style}</legend>
+                <div class="appearance-seg">
+                    {(['garden', 'night'] as const).map(style => (
+                        <label>
+                            <input type="radio" name="appearance-style" value={style} class="sr-only" />
+                            <span class={`w-4 h-4 rounded-full shrink-0 swatch-${style}`} aria-hidden="true"></span>
+                            {text.appearance.styles[style]}
+                        </label>
+                    ))}
+                </div>
+            </fieldset>
         </div>
 
         <div transition:animate="fade">
             <slot />
         </div>
 
-        <footer class="py-12 border-t border-base-200 text-center text-text-muted text-[10px] uppercase tracking-widest bg-base-100">
+        <footer class="py-12 border-t border-base-200 text-center text-text-muted text-xs uppercase tracking-widest bg-base-100">
             <img src="/brand/naturalia-mark.svg" alt="" width="218" height="276" class="h-10 w-auto mx-auto mb-6" />
             <p class="mb-2">Naturalia srl &middot; Via Luciano Manara 17, 20122 Milano</p>
             <p>&copy; 2026 Naturalia srl. {text.vat} 03350540963</p>
@@ -235,6 +294,23 @@ const menuLabels = text.menu;
             // bind on astro:page-load, and the new DOM always starts closed.
             // Global listeners are dropped on the next navigation via the abort signal.
             let controller: AbortController | undefined;
+
+            // Appearance panel: radios show the current choice, a change is stored and applied at once
+            function initAppearance() {
+                const panel = document.querySelector<HTMLElement>('[data-appearance]');
+                if (!panel) return;
+                const { mode, style } = document.documentElement.dataset;
+                panel.querySelectorAll<HTMLInputElement>('input[type=radio]').forEach(input => {
+                    input.checked = input.value === (input.name === 'appearance-mode' ? mode : style);
+                    input.addEventListener('change', () => {
+                        const key = input.name === 'appearance-mode' ? 'naturalia-mode' : 'naturalia-style';
+                        try { localStorage.setItem(key, input.value); } catch { /* private mode: applies to this page only */ }
+                        if (input.name === 'appearance-mode') document.documentElement.dataset.mode = input.value;
+                        window.naturaliaTheme?.();
+                    });
+                });
+            }
+            document.addEventListener('astro:page-load', initAppearance);
 
             function initMobileMenu() {
                 controller?.abort();

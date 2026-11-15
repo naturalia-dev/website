@@ -12,6 +12,14 @@ export const it = {
     },
     menu: { open: "Apri menu", close: "Chiudi menu", nav: "Menu principale" },
     vat: "P.IVA",
+    // Same names as the Irry The Seven interface
+    appearance: {
+      button: "Aspetto",
+      mode: "Tema",
+      modes: { light: "Chiaro", dark: "Scuro", system: "Sistema" },
+      style: "Stile",
+      styles: { garden: "Garden", night: "Acqua notturna" },
+    },
   },
 
   home: {
@@ -119,6 +127,10 @@ export const it = {
     submit: "Invia messaggio",
     // Prefill from a product page ("Richiedi informazioni" → /contact/?product=<slug>)
     productLabel: "Richiesta per",
+    // Hidden fields: Netlify titles them in the notification email after their name
+    productField: "prodotto",
+    sourceField: "provenienza",
+    sourceLabels: { landing_page: "pagina d'arrivo", source_site: "sito" } as Record<string, string>,
     productMessage: ({ title, price, url }: ProductRequest) =>
       `Buongiorno,\nvorrei ricevere maggiori informazioni su ${title}${price ? ` (${price})` : ""}.\n\nRiferimento: ${url}`,
   },

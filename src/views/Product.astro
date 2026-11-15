@@ -64,25 +64,25 @@ const productSchema = {
 ---
 
 <Layout title={`${title} | Naturalia`} description={`${title}: ${localized.tagline}`} ogImage={{ src: cover, alt: photos[0].alt }} schema={productSchema}>
-    <main class="bg-base-50 min-h-screen pt-32">
+    <main class="min-h-screen pt-32">
 
         <section class="relative max-w-7xl mx-auto px-6 pt-8 pb-20 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div class="relative order-2 lg:order-1 space-y-6">
-                <a href={localizePath('/products/', lang)} class="inline-block text-text-muted text-[10px] font-bold uppercase tracking-widest hover:text-accent-500 transition-colors">
+                <a href={localizePath('/products/', lang)} class="inline-block text-text-muted text-xs font-bold uppercase tracking-widest hover:text-accent-500 transition-colors">
                     &larr; {text.back}
                 </a>
                 <span class="block text-accent-500 text-xs font-bold tracking-[0.4em] uppercase">
                     {text.status[status]}
                 </span>
-                <h1 class="text-4xl md:text-5xl text-text-main font-semibold uppercase tracking-widest leading-tight text-balance">
+                <h1 class="text-4xl md:text-5xl text-text-main font-semibold tracking-tight leading-tight text-balance">
                     {title}
                 </h1>
                 <div class="h-px w-24 bg-accent-500"></div>
-                <p class="text-text-body font-light text-lg md:text-xl">{localized.tagline}</p>
+                <p class="text-text-body text-lg md:text-xl">{localized.tagline}</p>
                 <p class="text-text-main text-sm font-bold uppercase tracking-widest pt-2">
                     {price ?? text.priceOnRequest}
                 </p>
-                <a href={contactHref} class="inline-block px-10 py-4 bg-accent-500 text-white font-bold uppercase tracking-widest text-xs hover:bg-text-main transition-colors duration-500">
+                <a href={contactHref} class="rounded-xl inline-block px-10 py-4 bg-accent-500 text-on-accent font-bold uppercase tracking-widest text-xs hover:bg-text-main transition-colors duration-500">
                     {text.cta.button}
                 </a>
             </div>
@@ -121,20 +121,19 @@ const productSchema = {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                 </svg>
             </div>
-            <h2 class="text-2xl text-text-main font-bold uppercase tracking-widest mb-10 text-center">{text.details}</h2>
+            <h2 class="text-2xl text-text-main font-bold tracking-tight mb-10 text-center">{text.details}</h2>
             <div class="product-prose" set:html={descriptionHtml} />
         </section>
 
         {features.length > 0 && (
             <section class="relative bg-base-100 border-y border-base-200 py-24 px-6 mb-24">
-                <h2 class="text-2xl text-text-main font-bold uppercase tracking-widest mb-14 text-center">{text.features}</h2>
-                <!-- Hairline grid: 1px gaps over the border colour -->
-                <ul class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-base-200 border border-base-200">
+                <h2 class="text-2xl text-text-main font-bold tracking-tight mb-14 text-center">{text.features}</h2>
+                <ul class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {features.map(card => (
-                        <li class="bg-base-50 p-8 md:p-10 space-y-5">
+                        <li class="card p-8 md:p-10 space-y-5">
                             <Icon name={`lucide:${card.icon ?? 'sprout'}`} class="w-8 h-8 text-accent-500" aria-hidden="true" />
-                            <h3 class="text-text-main text-sm font-bold uppercase tracking-widest leading-relaxed">{card.title}</h3>
-                            <p class="text-text-body font-light leading-relaxed">{card.lead}</p>
+                            <h3 class="text-text-main text-sm font-bold tracking-tight leading-relaxed">{card.title}</h3>
+                            <p class="text-text-body leading-relaxed">{card.lead}</p>
                             {card.points.length > 0 && (
                                 <ul class="feature-points">
                                     {card.points.map(point => <li set:html={point} />)}
@@ -148,7 +147,7 @@ const productSchema = {
 
         {photos.length > 1 && (
             <section class="relative max-w-7xl mx-auto px-6 pb-24">
-                <h2 class="text-2xl text-text-main font-bold uppercase tracking-widest mb-10 text-center">{text.gallery}</h2>
+                <h2 class="text-2xl text-text-main font-bold tracking-tight mb-10 text-center">{text.gallery}</h2>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {photos.map((photo, i) => (
                         <button type="button" data-lightbox-open={i} aria-label={`${text.lightbox.open}: ${photo.alt}`} class="relative aspect-[4/3] overflow-hidden border border-base-200 cursor-zoom-in group">
@@ -168,7 +167,7 @@ const productSchema = {
 
         {video && (
             <section class="relative max-w-5xl mx-auto px-6 pb-24">
-                <h2 class="text-2xl text-text-main font-bold uppercase tracking-widest mb-10 text-center">{text.video}</h2>
+                <h2 class="text-2xl text-text-main font-bold tracking-tight mb-10 text-center">{text.video}</h2>
                 {video.kind === 'file' ? (
                     <video
                         src={`${video.src}#t=0.1`}
@@ -182,7 +181,7 @@ const productSchema = {
                         <button type="button" data-video-play class="absolute inset-0 w-full h-full group cursor-pointer">
                             <Picture src={cover} alt="" formats={['avif']} fallbackFormat="webp" widths={[640, 960]} sizes="(min-width: 1024px) 960px, 100vw" class="w-full h-full object-cover opacity-70" />
                             <span class="absolute inset-0 flex flex-col items-center justify-center gap-4">
-                                <span class="w-20 h-20 rounded-full border border-accent-500 flex items-center justify-center text-accent-500 group-hover:bg-accent-500 group-hover:text-white transition-colors duration-500">
+                                <span class="w-20 h-20 rounded-full border border-accent-500 flex items-center justify-center text-accent-500 group-hover:bg-accent-500 group-hover:text-on-accent transition-colors duration-500">
                                     <Icon name="lucide:play" class="w-8 h-8" />
                                 </span>
                                 <span class="text-text-main text-xs font-bold uppercase tracking-widest">{text.playVideo}</span>
@@ -194,8 +193,8 @@ const productSchema = {
         )}
 
         <section class="relative py-24 bg-base-100 border-t border-base-200 text-center">
-            <h2 class="text-3xl md:text-4xl text-text-main font-bold uppercase tracking-widest mb-8" set:html={text.cta.heading} />
-            <a href={contactHref} class="inline-block px-10 py-4 bg-accent-500 text-white font-bold uppercase tracking-widest text-xs hover:bg-text-main transition-colors duration-500">
+            <h2 class="text-3xl md:text-4xl text-text-main font-bold tracking-tight mb-8" set:html={text.cta.heading} />
+            <a href={contactHref} class="rounded-xl inline-block px-10 py-4 bg-accent-500 text-on-accent font-bold uppercase tracking-widest text-xs hover:bg-text-main transition-colors duration-500">
                 {text.cta.button}
             </a>
         </section>

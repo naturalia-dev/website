@@ -13,6 +13,13 @@ export const en = {
     },
     menu: { open: "Open menu", close: "Close menu", nav: "Main menu" },
     vat: "VAT",
+    appearance: {
+      button: "Appearance",
+      mode: "Theme",
+      modes: { light: "Light", dark: "Dark", system: "System" },
+      style: "Style",
+      styles: { garden: "Garden", night: "Night water" },
+    },
   },
 
   home: {
@@ -117,6 +124,9 @@ export const en = {
     },
     submit: "Send message",
     productLabel: "Enquiry about",
+    productField: "product",
+    sourceField: "source",
+    sourceLabels: { landing_page: "landing page", source_site: "site" } as Record<string, string>,
     productMessage: ({ title, price, url }: ProductRequest) =>
       `Hello,\nI would like to receive more information about ${title}${price ? ` (${price})` : ""}.\n\nReference: ${url}`,
   },

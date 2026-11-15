@@ -12,10 +12,6 @@ interface Props {
 const { lang } = Astro.props;
 const text = t(lang).contact;
 
-// Campaign fields filled from the in-memory attribution (see Layout.astro): declared here so Netlify Forms records them
-const attributionFields = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'ttclid', 'landing_page', 'source_site'];
-// (not `referrer`: Netlify records its own field with that name, the page the form was sent from)
-
 // Products → prefilled request when the page is opened as /contact/?product=<slug>
 const requests = Object.fromEntries((await getProducts()).map(product => {
     const { title } = product.data;
@@ -28,7 +24,7 @@ const requests = Object.fromEntries((await getProducts()).map(product => {
 ---
 
 <Layout title={text.title} description={text.description}>
-    <main class="bg-base-50 min-h-screen flex items-center justify-center relative px-6 py-32">
+    <main class="min-h-screen flex items-center justify-center relative px-6 py-32">
         
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[radial-gradient(closest-side,--theme(--color-accent-300/15%),transparent)] pointer-events-none"></div>
 
@@ -36,13 +32,13 @@ const requests = Object.fromEntries((await getProducts()).map(product => {
             
             <div class="mb-12 space-y-8 hero-enter">
                 
-                <span class="text-accent-500 text-xs font-bold tracking-[0.3em] uppercase block">
+                <span class="text-accent-500 text-xs font-bold tracking-[0.2em] uppercase block">
                     {text.badge}
                 </span>
                 
-                <h1 class="text-4xl md:text-6xl text-text-main font-semibold uppercase tracking-widest leading-tight" set:html={text.heading} />
+                <h1 class="text-4xl md:text-6xl text-text-main font-semibold tracking-tight leading-tight" set:html={text.heading} />
                 
-                <p class="text-text-body font-light text-lg max-w-2xl mx-auto pt-4">
+                <p class="text-text-body text-lg max-w-2xl mx-auto pt-4">
                     {text.intro}
                 </p>
                 
@@ -69,69 +65,69 @@ const requests = Object.fromEntries((await getProducts()).map(product => {
                     <label>{text.honeypot} <input name="bot-field" /></label>
                 </p>
 
-                <p data-product-note hidden class="text-center text-text-muted text-[10px] font-bold uppercase tracking-widest">
+                <p data-product-note hidden class="text-center text-text-muted text-xs font-bold uppercase tracking-widest">
                     {text.productLabel} <span class="text-accent-500"></span>
                 </p>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
-                        <label for="name" class="text-[10px] text-accent-500 uppercase tracking-widest font-bold">{text.name}</label>
+                        <label for="name" class="text-xs text-accent-500 uppercase tracking-widest font-bold">{text.name}</label>
                         <input 
                             type="text" 
                             id="name"
                             name="name" 
                             required
-                            class="w-full bg-white border border-base-300 text-text-main px-4 py-3 focus:outline-none focus:border-accent-500 transition-colors text-sm"
+                            class="w-full bg-surface border border-base-300 rounded-xl text-text-main px-4 py-3 focus:outline-none focus:border-accent-500 transition-colors text-sm"
                         />
                     </div>
                     <div class="space-y-2">
-                        <label for="email" class="text-[10px] text-accent-500 uppercase tracking-widest font-bold">{text.email}</label>
+                        <label for="email" class="text-xs text-accent-500 uppercase tracking-widest font-bold">{text.email}</label>
                         <input 
                             type="email" 
                             id="email"
                             name="email" 
                             required
-                            class="w-full bg-white border border-base-300 text-text-main px-4 py-3 focus:outline-none focus:border-accent-500 transition-colors text-sm"
+                            class="w-full bg-surface border border-base-300 rounded-xl text-text-main px-4 py-3 focus:outline-none focus:border-accent-500 transition-colors text-sm"
                         />
                     </div>
                 </div>
                 
                 <div class="space-y-2">
-                    <label for="message" class="text-[10px] text-accent-500 uppercase tracking-widest font-bold">{text.message}</label>
+                    <label for="message" class="text-xs text-accent-500 uppercase tracking-widest font-bold">{text.message}</label>
                     <textarea 
                         id="message"
                         name="message" 
                         rows="5" 
                         required
-                        class="w-full bg-white border border-base-300 text-text-main px-4 py-3 focus:outline-none focus:border-accent-500 transition-colors text-sm"
+                        class="w-full bg-surface border border-base-300 rounded-xl text-text-main px-4 py-3 focus:outline-none focus:border-accent-500 transition-colors text-sm"
                     ></textarea>
                 </div>
 
                 <div class="space-y-2">
-                    <label for="heard_about" class="text-[10px] text-accent-500 uppercase tracking-widest font-bold">{text.heardAbout.label}</label>
+                    <label for="heard_about" class="text-xs text-accent-500 uppercase tracking-widest font-bold">{text.heardAbout.label}</label>
                     <select
                         id="heard_about"
                         name="heard_about"
-                        class="w-full bg-white border border-base-300 text-text-main px-4 py-3 focus:outline-none focus:border-accent-500 transition-colors text-sm"
+                        class="w-full bg-surface border border-base-300 rounded-xl text-text-main px-4 py-3 focus:outline-none focus:border-accent-500 transition-colors text-sm"
                     >
                         <option value="">{text.heardAbout.placeholder}</option>
                         {text.heardAbout.options.map(option => <option value={option.value}>{option.label}</option>)}
                     </select>
                 </div>
 
-                <!-- Hidden fields after the visible ones: the notification email lists fields in form order.
-                     Empty ones are left out on submit (see skipEmptyFields) -->
-                <!-- Filled only when coming from a product page: shows the product in the Netlify submission -->
-                <input type="hidden" name="product" value="" data-optional />
-                <div data-attribution hidden>
-                    {attributionFields.map(field => <input type="hidden" name={field} value="" data-optional />)}
-                </div>
+                <!-- Hidden fields after the visible ones: the notification email lists every field declared
+                     in the form, in form order, even when empty. So few of them, titled by their name -->
+                <!-- Filled only when coming from a product page -->
+                <input type="hidden" name={text.productField} value="" data-product />
+                <!-- Campaign data from the in-memory attribution (see Layout.astro), only the values present.
+                     Not named `referrer`: Netlify records its own field with that name -->
+                <input type="hidden" name={text.sourceField} value="" data-attribution data-labels={JSON.stringify(text.sourceLabels)} />
 
                 <Recaptcha lang={lang} />
 
                 <button 
                     type="submit" 
-                    class="w-full py-4 bg-accent-500 text-white font-bold uppercase tracking-[0.2em] hover:bg-text-main transition-colors duration-500 mt-6 cursor-pointer"
+                    class="rounded-xl w-full py-4 bg-accent-500 text-on-accent font-bold uppercase tracking-[0.2em] hover:bg-text-main transition-colors duration-500 mt-6 cursor-pointer"
                 >
                     {text.submit}
                 </button>
@@ -152,7 +148,7 @@ const requests = Object.fromEntries((await getProducts()).map(product => {
         const request = requests[slug];
         if (!request) return;
 
-        form.querySelector<HTMLInputElement>('input[name="product"]')!.value = request.label;
+        form.querySelector<HTMLInputElement>('input[data-product]')!.value = request.label;
         const message = form.querySelector<HTMLTextAreaElement>('textarea[name="message"]')!;
         if (!message.value) message.value = request.message;
         const note = form.querySelector<HTMLElement>('[data-product-note]')!;
@@ -160,25 +156,17 @@ const requests = Object.fromEntries((await getProducts()).map(product => {
         note.hidden = false;
     }
 
-    // Campaign data captured on the landing page (Layout.astro) → hidden fields
+    // Campaign data captured on the landing page (Layout.astro) → one line, e.g.
+    // "pagina d'arrivo: /products/irry-the-seven/ · sito: google.com · utm_source: instagram"
     function fillAttribution() {
-        const attribution = window.msAttribution ?? {};
-        document.querySelectorAll<HTMLInputElement>('[data-attribution] input').forEach(input => {
-            input.value = attribution[input.name] ?? '';
-        });
-    }
-
-    // Disabled fields are not submitted: the notification email lists only the hidden fields with a value
-    function skipEmptyFields() {
-        const form = document.querySelector<HTMLFormElement>('form[data-product-requests]');
-        form?.addEventListener('submit', () => {
-            form.querySelectorAll<HTMLInputElement>('input[data-optional]').forEach(input => {
-                input.disabled = input.value === '';
-            });
-        });
+        const input = document.querySelector<HTMLInputElement>('input[data-attribution]');
+        if (!input) return;
+        const labels: Record<string, string> = JSON.parse(input.dataset.labels ?? '{}');
+        input.value = Object.entries(window.msAttribution ?? {})
+            .map(([key, value]) => `${labels[key] ?? key}: ${value}`)
+            .join(' · ');
     }
 
     document.addEventListener('astro:page-load', prefillProduct);
     document.addEventListener('astro:page-load', fillAttribution);
-    document.addEventListener('astro:page-load', skipEmptyFields);
 </script>
